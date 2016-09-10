@@ -1,0 +1,3 @@
+[submodule "libworld2d"]
+	path = libworld2d
+	url = https://github.com/nthend/libworld2d.git
