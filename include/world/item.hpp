@@ -1,10 +1,11 @@
 #pragma once
 
 #include <QGraphicsItem>
+#include <QPainter>
 
 #include <la/vec.hpp>
 
-#include <core/entity.hpp>
+#include <world/entity.hpp>
 
 
 QPointF v2q(const vec2 &v) {
@@ -23,16 +24,12 @@ QColor qmix(const QColor &a, const QColor &b, double r = 0.5) {
 
 class Item : public QGraphicsItem {
 public:
-	constexpr static const char *COLOR = "#888888";
-	
 	bool exists = true;
-	
-	double size = 20.0;
-	
+	double size;
 	QColor color;
 	
-	Item(Entity *e) : QGraphicsItem() {
-		color = QColor(COLOR);
+	Item() : QGraphicsItem() {
+		color = QColor("#888888");
 	}
 	virtual ~Item() = default;
 	
@@ -42,19 +39,13 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override {
 		if(size > 0.0) {
-			QColor dark_color = qmix(color, QColor("#000000"), 0.75);
-			QPen pen;
-			pen.setWidth(2);
-			pen.setCosmetic(true);
-			pen.setColor(dark_color);
-			painter->setPen(pen);
-			
+			painter->setPen(Qt::NoPen);
 			painter->setBrush(color);
 			painter->drawEllipse(boundingRect());
 		}
 	}
 	
-	virtual void sync(Entity *e) {
+	virtual void sync(const Entity *e) {
 		setPos(v2q(e->pos));
 		size = e->size();
 		// update();
