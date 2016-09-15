@@ -1,10 +1,12 @@
 #pragma once
 
 #include <QGraphicsScene>
+#include <QTimer>
 
 #include <map>
 #include <cmath>
 #include <string>
+#include <functional>
 
 #include <world/world.hpp>
 
@@ -14,7 +16,9 @@ class Scene : public QGraphicsScene {
 public:
 	std::map<int, Item*> items;
 	World &world;
-
+	
+	bool done = false;
+	
 	Scene(World &w) : QGraphicsScene(),
 		world(w) 
 	{
@@ -35,9 +39,26 @@ public:
 		return item;
 	}
 	
+	void sync_func() {
+		sync();
+		// update();
+		if(!done) {
+			QTimer::singleShot(40, [this](){sync_func();});
+		}
+	}
+	
+	void start() {
+		done = false;
+		sync_func();
+	}
+	
+	void stop() {
+		done = true;
+	}
+	
 	void sync() {
 		for(auto &p : items) {
-			p.second->exists = false;
+			p.second->exist = false;
 		}
 		
 		world.access.lock();
@@ -56,13 +77,13 @@ public:
 					it = ii->second;
 					it->sync(e);
 				}
-				it->exists = true;
+				it->exist = true;
 			}
 		}
 		world.access.unlock();
 		
 		for(auto ii = items.begin(); ii != items.end();) {
-			if(ii->second->exists) {
+			if(ii->second->exist) {
 				++ii;
 			} else {
 				auto iv = ii->second;

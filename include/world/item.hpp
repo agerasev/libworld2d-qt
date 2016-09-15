@@ -24,7 +24,7 @@ QColor qmix(const QColor &a, const QColor &b, double r = 0.5) {
 
 class Item : public QGraphicsItem {
 public:
-	bool exists = true;
+	bool exist = true;
 	double size;
 	QColor color;
 	

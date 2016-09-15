@@ -56,14 +56,15 @@ public:
 		vec2 sv = vec2(t.m11()*r.width(), t.m22()*r.height());
 		auto s = size();
 		vec2 vv = vec2(s.width(), s.height());
-		if(all(sv < vv)) {
-			fitInView(sceneRect(), Qt::KeepAspectRatio);
+		double z = min(0.9*vv/sv);
+		if(z > 1.0) {
+			scale(z, z);
 		}
 	}
 	
 	virtual void wheelEvent(QWheelEvent *event) override {
 		// QGraphicsView::wheelEvent(event);
-		float z = pow(zf, event->delta()/120.0);
+		double z = pow(zf, event->delta()/120.0);
 		scale(z,z);
 		fit();
 	}
